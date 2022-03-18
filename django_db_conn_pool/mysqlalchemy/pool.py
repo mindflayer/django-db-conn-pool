@@ -3,9 +3,6 @@ import threading
 
 from typing import Union, Callable
 
-import six
-from six.moves import range
-
 import sqlalchemy.pool
 import sqlalchemy.util.queue
 
@@ -18,7 +15,7 @@ def __evaluate__(_callable_or_value):
 class HashableDict(dict):
 
     def __hash__(self):
-        return hash(frozenset(six.iteritems(self)))
+        return hash(frozenset((k, str(v)) for k, v in self.items()))
 
 
 class IntervalTimer(threading.Thread):

@@ -3,8 +3,6 @@ import os
 import threading
 import collections
 
-import six
-
 from django.utils.safestring import SafeBytes, SafeText
 from django.db.utils import DatabaseError
 from django.db.backends.mysql import base as mysql
@@ -59,7 +57,7 @@ class DatabaseWrapper(mysql.DatabaseWrapper):
     def get_connection_params(self):
         raw_params = super(DatabaseWrapper, self).get_connection_params()
         new_params = dict()
-        for raw_key, raw_value in six.iteritems(raw_params):
+        for raw_key, raw_value in raw_params.items():
             new_value = raw_value
             if not isinstance(raw_value, collections.Hashable):
                 if isinstance(raw_value, dict):
@@ -76,7 +74,7 @@ class DatabaseWrapper(mysql.DatabaseWrapper):
     def get_new_connection(self, conn_params):
         db_proxy = self.db_proxy
         conn = db_proxy.connect(**conn_params)
-        conn.encoders[SafeText] = conn.encoders[six.text_type]
+        conn.encoders[SafeText] = conn.encoders[str]
         conn.encoders[SafeBytes] = conn.encoders[bytes]
         return conn
 

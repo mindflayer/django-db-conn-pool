@@ -1,7 +1,6 @@
 
 import copy
 
-import six
 import sqlalchemy.pool
 
 from .pool import DjangoQueuePool
@@ -61,7 +60,7 @@ class DjangoPoolParams(object):
         'reset_on_return': None,                                            # do not use sqlalchemy reset on return
     }
 
-    _supported_params = set(six.iterkeys(_fast_and_wild))
+    _supported_params = set(_fast_and_wild.keys())
 
     _params_to_kwargs = {
         'django_pool_class': None,
@@ -72,7 +71,7 @@ class DjangoPoolParams(object):
         'django_retire_interval': 'retire_interval',
         'django_retire_quantity': 'retire_quantity',
     }
-    if not _supported_params.issuperset(_params_to_kwargs.viewkeys()):
+    if not _supported_params.issuperset(_params_to_kwargs.keys()):
         raise Exception('invalid supported params: %s' % _supported_params)
 
     def __init__(self, pool_params):
@@ -83,7 +82,7 @@ class DjangoPoolParams(object):
 
     @classmethod
     def unsupported(cls, params):
-        return six.viewkeys(params) - cls._supported_params
+        return params.keys() - cls._supported_params
 
     @classmethod
     def new_slow_safe(cls, **updated):
@@ -117,7 +116,7 @@ class DjangoPoolParams(object):
         for _k in self._params_to_kwargs:
             pool_kwargs.pop(_k, None)
         if pool_class == DjangoQueuePool:
-            for _k, _v in six.iteritems(self._params_to_kwargs):
+            for _k, _v in self._params_to_kwargs.items():
                 if _k is not None and _v is not None:
                     pool_kwargs[_v] = self.pool_params.get(_k, None)
         return pool_kwargs
